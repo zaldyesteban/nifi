@@ -16,14 +16,14 @@
 # under the License.
 #
 ARG IMAGE_NAME=openjdk
-ARG IMAGE_TAG=8-jre
+ARG IMAGE_TAG=11-jre
 FROM ${IMAGE_NAME}:${IMAGE_TAG}
 ARG MAINTAINER="Apache NiFi <dev@nifi.apache.org>"
 LABEL maintainer="${MAINTAINER}"
 LABEL site="https://nifi.apache.org"
 
-ARG UID=1000
-ARG GID=1000
+ARG UID=1000980000
+ARG GID=1000980000
 ARG NIFI_VERSION=1.17.0
 ARG BASE_URL=https://archive.apache.org/dist
 ARG MIRROR_BASE_URL=${MIRROR_BASE_URL:-${BASE_URL}}
@@ -43,11 +43,11 @@ RUN chmod -R +x ${NIFI_BASE_DIR}/scripts/*.sh
 
 # Setup NiFi user and create necessary directories
 RUN groupadd -g ${GID} nifi || groupmod -n nifi `getent group ${GID} | cut -d: -f1` \
-    && useradd --shell /bin/bash -u ${UID} -g ${GID} -m nifi \
-    && mkdir -p ${NIFI_BASE_DIR} \
-    && chown -R nifi:nifi ${NIFI_BASE_DIR} \
-    && apt-get update \
-    && apt-get install -y jq xmlstarlet procps
+  && useradd --shell /bin/bash -u ${UID} -g ${GID} -m nifi --no-log-init \
+  && mkdir -p ${NIFI_BASE_DIR} \
+  && chown -R nifi:nifi ${NIFI_BASE_DIR} \
+  && apt-get update \
+  && apt-get install -y jq xmlstarlet procps
 
 USER nifi
 
